@@ -1,0 +1,107 @@
+using System;
+
+namespace DynamicPricing
+{
+    
+    public interface IQualityComputation
+    {
+        int ComputeQuality();
+    }
+
+    
+    public interface ICostComputation
+    {
+        decimal ComputeCost(int quantity);
+    }
+
+    public interface ExternalCondition
+    {
+        decimal GetDynamicCostFactor();
+       
+    }
+
+
+
+    public abstract class Product
+    {
+        public int ProductId { get; }
+        protected Product(int productId)
+        {
+            ProductId = productId;
+        }
+        public abstract int ComputeQuality();
+        public abstract decimal ComputeCost(int quantity);
+        public abstract decimal GetDynamicCostFactor();
+    }
+
+    
+   
+
+    
+    public class Laptop : Product, IQualityComputation, ICostComputation, ExternalCondition
+    {
+        public Laptop(int productId) : base(productId)
+        {
+        }
+        public override int ComputeQuality()
+        {           
+            return 90; 
+        }
+        public override decimal GetDynamicCostFactor()
+        {
+            return 1.9m;
+        }
+
+        public override decimal ComputeCost(int quantity)
+        {
+            
+            decimal dynamicCostFactor = GetDynamicCostFactor();            
+            return 800 * quantity * dynamicCostFactor; 
+        }
+
+    }
+
+
+    public class Tomato : Product, IQualityComputation, ICostComputation, ExternalCondition
+    {
+        public Tomato(int productId) : base(productId)
+        {
+        }
+     
+        public override int ComputeQuality()
+        {          
+            return 85; 
+        }
+        public override decimal GetDynamicCostFactor()
+        {
+            return 1.5m;
+        }
+
+
+        public override decimal ComputeCost(int quantity)
+        {
+            
+            decimal dynamicCostFactor =GetDynamicCostFactor();
+           
+            return 500 * quantity * dynamicCostFactor; 
+        }
+    }
+
+    class ECommerce
+    {
+        static void Main(string[] args)
+        {
+            Laptop laptop = new Laptop(1);
+            Tomato tomato = new Tomato(2);
+
+            int laptopQuality = laptop.ComputeQuality();
+            decimal laptopCost = laptop.ComputeCost(5);
+
+            int TomatoQuality = tomato.ComputeQuality();
+            decimal TomatoCost = tomato.ComputeCost(10);
+
+            Console.WriteLine($"Laptop Quality: {laptopQuality}, Cost: {laptopCost}");
+            Console.WriteLine($"Tomato Quality: {TomatoQuality}, Cost: {TomatoCost}");
+        }
+    }
+}
